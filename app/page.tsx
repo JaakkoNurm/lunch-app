@@ -41,7 +41,7 @@ export default function Home() {
     <main className="container mx-auto px-4 py-8 relative">
       {expandedCardId && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-md z-40"
+          className="fixed inset-0 bg-black/60 backdrop-blur-md z-10"
           onClick={() => setExpandedCardId(null)}
         />
       )}
@@ -68,16 +68,12 @@ export default function Home() {
       </section>
 
       {expandedCardId && expandedRestaurant && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          onClick={() => setExpandedCardId(null)}
-        >
-          <ExpandedCard
-            name={expandedRestaurant.name}
-            desc="Affordable student lunch options."
-            menu={expandedRestaurant.menu}
-          />
-        </div>
+        <ExpandedCard
+          className="z-20 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+          name={expandedRestaurant.name}
+          desc="Affordable student lunch options."
+          menu={expandedRestaurant.menu}
+        />
       )}
     </main>
   )

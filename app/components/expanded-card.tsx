@@ -2,6 +2,8 @@ import Image from "next/image"
 import { Star } from "lucide-react"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { PriceIndicator } from "./price-indicator"
+import { CommentSection } from "./comment-section"
+import { cn } from "@/lib/utils"
 
 type ExpandedCardProps = {
   name: string;
@@ -12,11 +14,12 @@ type ExpandedCardProps = {
     recipeId: number;
     iconUrl: string;
   }[];
+  className?: string;
 }
 
-export const ExpandedCard = ({ name, desc, menu }: ExpandedCardProps) => (
+export const ExpandedCard = ({ name, desc, menu, className }: ExpandedCardProps) => (
   <Card
-    className="w-full max-w-[60%] max-h-[80vh] overflow-y-auto"
+    className={cn("w-full max-w-[60%] max-h-[80vh] overflow-y-auto", className)}
   >
     <Image
       className="rounded ml-auto mr-auto mt-4"
@@ -42,6 +45,12 @@ export const ExpandedCard = ({ name, desc, menu }: ExpandedCardProps) => (
           </li>
         ))}
       </ul>
+      <CommentSection
+        restaurantId={name}
+        comments={[]}
+        onAddComment={(comment) => {}}
+        onDeleteComment={(commentId) => {}}
+      />
     </CardContent>
     <CardFooter className="px-4 py-3 border-t bg-muted/30">
       <div className="flex justify-between w-full text-sm">

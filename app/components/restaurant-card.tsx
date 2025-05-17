@@ -20,8 +20,9 @@ export const RestaurantCard = ({name, desc, menu, onClick}: RestaurantCardProps)
     className="overflow-hidden h-full transition-all hover:shadow-lg"
     onClick={onClick}
   >
-    <div className="relative h-48 w-full">
+    <div className="flex items-center justify-center h-48 mt-1 w-full">
       <Image
+        className="rounded-md"
         src="/restaurant-placeholder.svg"
         alt="restaurant name"
         width={384}
