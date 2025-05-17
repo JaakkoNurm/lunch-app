@@ -1,5 +1,6 @@
 import Image from "next/image"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { PriceIndicator } from "./price-indicator";
 
 type RestaurantCardProps = {
   name: string;
@@ -35,7 +36,7 @@ export const RestaurantCard = ({name, desc, menu, onClick}: RestaurantCardProps)
     </CardContent>
     <CardFooter className="px-4 py-3 border-t bg-muted/30">
       <div className="flex justify-between w-full text-sm">
-        <span>pricing</span>
+        <PriceIndicator value={2} />
         <span>reviews</span>
       </div>
     </CardFooter>

@@ -1,12 +1,11 @@
 "use client"
 
-import Image from "next/image"
 import { useState, useEffect } from "react";
 import { RestaurantCard } from "./components/restaurant-card"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { ExpandedCard } from "./components/expanded-card";
 
-type LunchData = {
-  restaurant: string;
+type Restaurants = {
+  name: string;
   menu: {
     name: string;
     diet: string[];
@@ -16,7 +15,7 @@ type LunchData = {
 };
 
 export default function Home() {
-  const [lunchData, setLunchData] = useState<LunchData[]>([])
+  const [restaurantData, setRestaurantData] = useState<Restaurants[]>([])
   const [loading, setLoading] = useState(true)
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null)
 
@@ -24,13 +23,13 @@ export default function Home() {
     setExpandedCardId(expandedCardId === id ? null : id)
   }
 
-  const expandedRestaurant = lunchData.find((restaurant) => restaurant.restaurant === expandedCardId)
+  const expandedRestaurant = restaurantData.find((restaurant) => restaurant.name === expandedCardId)
 
   async function fetchLunchData() {
     const response = await fetch("/api/lunch")
     const data = await response.json()
     console.log("fetched lunch data", data)
-    setLunchData(data)
+    setRestaurantData(data)
     setLoading(false)
   }
   
@@ -55,13 +54,13 @@ export default function Home() {
               <p className="text-center text-gray-500">Loading...</p>
             </div>
           ) : (
-            lunchData.map((restaurantData) => (
+            restaurantData.map((restaurant) => (
               <RestaurantCard
-                key={restaurantData.restaurant}
-                name={restaurantData.restaurant}
+                key={restaurant.name}
+                name={restaurant.name}
                 desc="Today's lunch"
-                menu={restaurantData.menu}
-                onClick={() => handleCardExpansion(restaurantData.restaurant)}
+                menu={restaurant.menu}
+                onClick={() => handleCardExpansion(restaurant.name)}
               />
             ))
           )}
@@ -73,37 +72,11 @@ export default function Home() {
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
           onClick={() => setExpandedCardId(null)}
         >
-          <Card
-            className="w-full max-w-[80%] max-h-[80vh] overflow-y-auto"
-          >
-            <Image
-              src="/restaurant-placeholder.svg"
-              alt="restaurant name"
-              width={384}
-              height={192}
-            />
-            <CardContent>
-              <h2 className="text-2xl font-bold mt-8 mb-4">
-                {expandedRestaurant.restaurant}
-              </h2>
-              <p>
-                Today's lunch
-              </p>
-              <ul className="list-disc list-inside mt-4">
-                {expandedRestaurant.menu.map((item) => (
-                  <li key={item.name}>
-                    {item.name}
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-            <CardFooter className="px-4 py-3 border-t bg-muted/30">
-              <div className="flex justify-between w-full text-sm">
-                <span>pricing</span>
-                <span>reviews</span>
-              </div>
-            </CardFooter>
-          </Card>
+          <ExpandedCard
+            name={expandedRestaurant.name}
+            desc="Today's lunch"
+            menu={expandedRestaurant.menu}
+          />
         </div>
       )}
     </main>

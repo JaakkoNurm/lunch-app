@@ -28,7 +28,7 @@ def get_menu_via_api(restaurant, url):
   for package in data['menuPackages']:
     meals.extend(package['meals'])
   return {
-    "restaurant": restaurant,
+    "name": restaurant,
     "menu": meals
   }
 
