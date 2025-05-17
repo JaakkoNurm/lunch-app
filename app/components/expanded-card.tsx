@@ -1,4 +1,5 @@
 import Image from "next/image"
+import { Star } from "lucide-react"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { PriceIndicator } from "./price-indicator"
 
@@ -25,16 +26,16 @@ export const ExpandedCard = ({ name, desc, menu }: ExpandedCardProps) => (
       height={240}
     />
     <CardContent>
-      <h2 className="text-2xl font-bold mt-8 mb-4">
+      <h2 className="text-2xl font-bold mt-8">
         {name}
       </h2>
+      <p className="text-sm text-muted-foreground mb-4">
+        {desc}
+      </p>
       <p>
         Today's lunch
       </p>
-      <p className="text-sm text-muted-foreground mt-2">
-        {desc}
-      </p>
-      <ul className="list-disc list-inside mt-4">
+      <ul className="list-disc list-inside mt-2">
         {menu.map((item) => (
           <li key={item.name}>
             {item.name}
@@ -45,7 +46,10 @@ export const ExpandedCard = ({ name, desc, menu }: ExpandedCardProps) => (
     <CardFooter className="px-4 py-3 border-t bg-muted/30">
       <div className="flex justify-between w-full text-sm">
         <PriceIndicator value={2} />
-        <span>reviews</span>
+        <div className="flex items-center">
+          <Star className="h-4 w-4 fill-amber-400 text-amber-400 mr-1" />
+          <span className="text-sm font-medium">{3.45.toFixed(1)}</span>
+        </div>
       </div>
     </CardFooter>
   </Card>

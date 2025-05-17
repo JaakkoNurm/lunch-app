@@ -74,7 +74,7 @@ export default function Home() {
         >
           <ExpandedCard
             name={expandedRestaurant.name}
-            desc="Today's lunch"
+            desc="Affordable student lunch options."
             menu={expandedRestaurant.menu}
           />
         </div>
