@@ -1,21 +1,21 @@
 import Image from "next/image"
 import { Star } from "lucide-react"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { Card, CardContent, CardFooter } from "@/app/components/ui/card"
 import { PriceIndicator } from "./price-indicator";
 
 type RestaurantCardProps = {
   name: string;
+  imgUrl: string;
   desc: string;
   menu: {
-    name: string;
-    diet: string[];
-    recipeId: number;
-    iconUrl: string;
+    mealName: string;
+    mealPrice: string;
+    diets: string[];
   }[];
   onClick: () => void;
 }
 
-export const RestaurantCard = ({name, desc, menu, onClick}: RestaurantCardProps) => (
+export const RestaurantCard = ({name, imgUrl, desc, menu, onClick}: RestaurantCardProps) => (
   <Card
     className="overflow-hidden h-full transition-all hover:shadow-lg"
     onClick={onClick}
@@ -23,10 +23,10 @@ export const RestaurantCard = ({name, desc, menu, onClick}: RestaurantCardProps)
     <div className="flex items-center justify-center h-48 mt-1 w-full">
       <Image
         className="rounded-md"
-        src="/restaurant-placeholder.svg"
+        src={`https://www.unica.fi${imgUrl}?preset=medium`}
         alt="restaurant name"
-        width={384}
-        height={192}
+        width={200}
+        height={200}
       />
     </div>
     <CardContent className="p-4">

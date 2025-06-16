@@ -1,11 +1,11 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/avatar"
 import { StarIcon } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { cn } from "@/lib/utils"
+import { Button } from "@/app/components/ui/button"
+import { Textarea } from "@/app/components/ui/textarea"
+import { cn } from "@/app/utils/cn"
 
 type Comment = {
   id: string;

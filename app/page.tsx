@@ -5,12 +5,15 @@ import { RestaurantCard } from "./components/restaurant-card"
 import { ExpandedCard } from "./components/expanded-card";
 
 type Restaurants = {
-  name: string;
+  locationName: string;
+  restaurantName: string;
+  openingHoursToday: string;
+  image: string;
+  url: string;
   menu: {
-    name: string;
-    diet: string[];
-    recipeId: number;
-    iconUrl: string;
+    mealName: string;
+    mealPrice: string;
+    diets: string[];
   }[];
 };
 
@@ -23,7 +26,7 @@ export default function Home() {
     setExpandedCardId(expandedCardId === id ? null : id)
   }
 
-  const expandedRestaurant = restaurantData.find((restaurant) => restaurant.name === expandedCardId)
+  const expandedRestaurant = restaurantData.find((restaurant) => restaurant.restaurantName === expandedCardId)
 
   async function fetchLunchData() {
     const response = await fetch("/api/lunch")
@@ -54,15 +57,19 @@ export default function Home() {
               <p className="text-center text-gray-500">Loading...</p>
             </div>
           ) : (
-            restaurantData.map((restaurant) => (
-              <RestaurantCard
-                key={restaurant.name}
-                name={restaurant.name}
-                desc="Today's lunch"
-                menu={restaurant.menu}
-                onClick={() => handleCardExpansion(restaurant.name)}
-              />
-            ))
+            restaurantData.map((restaurant) => {
+              const { restaurantName, menu, image } = restaurant;
+
+              return (
+                <RestaurantCard
+                  key={restaurantName}
+                  name={restaurantName}
+                  imgUrl={image}
+                  desc="Today's lunch"
+                  menu={menu}
+                  onClick={() => handleCardExpansion(restaurantName)}
+                />
+              )})
           )}
         </div>
       </section>
@@ -70,7 +77,8 @@ export default function Home() {
       {expandedCardId && expandedRestaurant && (
         <ExpandedCard
           className="z-20 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-          name={expandedRestaurant.name}
+          name={expandedRestaurant.restaurantName}
+          imgUrl={expandedRestaurant.image}
           desc="Affordable student lunch options."
           menu={expandedRestaurant.menu}
         />

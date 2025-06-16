@@ -11,6 +11,9 @@ const nextConfig = {
       },
     ]
   },
+  images: {
+    domains: ['www.unica.fi'],
+  }
 }
 
 module.exports = nextConfig

@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/app/utils/cn"
 
 type PriceIndicatorProps = {
     value: 1 | 2 | 3;

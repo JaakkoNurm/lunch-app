@@ -1,29 +1,29 @@
 import Image from "next/image"
 import { Star } from "lucide-react"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { Card, CardContent, CardFooter } from "@/app/components/ui/card"
 import { PriceIndicator } from "./price-indicator"
 import { CommentSection } from "./comment-section"
-import { cn } from "@/lib/utils"
+import { cn } from "@/app/utils/cn"
 
 type ExpandedCardProps = {
   name: string;
+  imgUrl: string;
   desc: string;
   menu: {
-    name: string;
-    diet: string[];
-    recipeId: number;
-    iconUrl: string;
+    mealName: string;
+    mealPrice: string;
+    diets: string[];
   }[];
   className?: string;
 }
 
-export const ExpandedCard = ({ name, desc, menu, className }: ExpandedCardProps) => (
+export const ExpandedCard = ({ name, imgUrl, desc, menu, className }: ExpandedCardProps) => (
   <Card
     className={cn("w-full max-w-[60%] max-h-[80vh] overflow-y-auto", className)}
   >
     <Image
       className="rounded ml-auto mr-auto mt-4"
-      src="/restaurant-placeholder.svg"
+      src={`https://www.unica.fi${imgUrl}?preset=medium`}
       alt="restaurant name"
       width={480}
       height={240}
@@ -40,8 +40,8 @@ export const ExpandedCard = ({ name, desc, menu, className }: ExpandedCardProps)
       </p>
       <ul className="list-disc list-inside mt-2">
         {menu.map((item) => (
-          <li key={item.name}>
-            {item.name}
+          <li key={item.mealName}>
+            {item.mealName}: {item.mealPrice}
           </li>
         ))}
       </ul>
