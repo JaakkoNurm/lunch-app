@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { RestaurantCard } from "./components/restaurant-card"
 import { ExpandedCard } from "./components/expanded-card";
+import { Button } from "./components/ui/button";
+import { AuthModal } from "./components/auth-modal";
 
 type Restaurants = {
   locationName: string;
@@ -21,6 +23,7 @@ export default function Home() {
   const [restaurantData, setRestaurantData] = useState<Restaurants[]>([])
   const [loading, setLoading] = useState(true)
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null)
+  const [authModalOpen, setAuthModalOpen] = useState(false)
 
   const handleCardExpansion = (id: string) => {
     setExpandedCardId(expandedCardId === id ? null : id)
@@ -50,6 +53,11 @@ export default function Home() {
       )}
 
       <h1 className="text-3xl font-bold mb-4">Today's Lunch</h1>
+      <div className="flex flex-row justify-end mb-2">
+        <Button onClick={() => setAuthModalOpen(true)}>
+          Login
+        </Button>
+      </div>
       <section className="relative">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
@@ -83,6 +91,8 @@ export default function Home() {
           menu={expandedRestaurant.menu}
         />
       )}
+
+      <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
     </main>
   )
 }
