@@ -10,15 +10,19 @@ import { Input } from "@/app/components/ui/input"
 import { Label } from "@/app/components/ui/label"
 import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/avatar"
 import { Upload, User } from "lucide-react"
+import { registerUser } from "@/app/services/api"
 
-interface AuthModalProps {
+type AuthModalProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
 export function AuthModal({ open, onOpenChange }: AuthModalProps) {
   const [activeTab, setActiveTab] = useState("login")
+  const [error, setError] = useState('')
   const [profileImage, setProfileImage] = useState<string | null>(null)
+
+  console.log("AuthModal rendered, activeTab:", activeTab)
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -42,8 +46,9 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
     onOpenChange(false)
   }
 
-  const handleRegister = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    console.log("ran handle register")
     const formData = new FormData(event.currentTarget)
     const userData = {
       email: formData.get("email") as string,
@@ -54,8 +59,18 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
       profilePicture: profileImage,
     }
 
-    // TODO: Implement registration logic
-    console.log("Register:", userData)
+    try {
+      const response = await registerUser(userData);
+      const { success } = response;
+
+      if (success) {
+        console.log("Succesfully registered");
+      } else {
+        throw new Error(response.error);
+      }
+    } catch (error) {
+      console.log("Error while trying to register: ", error)
+    }
     onOpenChange(false)
   }
 

@@ -1,8 +1,12 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 from datetime import datetime, timezone
 import requests
 import urllib.parse
 from bs4 import BeautifulSoup
+import psycopg
+from psycopg import OperationalError
+from psycopg.rows import dict_row
+import bcrypt
 
 app = Flask(__name__)
 
@@ -65,6 +69,62 @@ def get_lunch():
   restaurants = parse_restaurant_data(data)
 
   return jsonify(restaurants)
+
+PG_HOST = "localhost"
+PG_DATABASE = "postgres"
+PG_USER = "postgres"
+PG_PASSWORD = "postgres"
+PG_PORT = 5432
+
+def create_connection(rowFactory=None):
+    connection = None
+    try:
+        connection = psycopg.connect(
+            dbname=PG_DATABASE,
+            user=PG_USER,
+            password=PG_PASSWORD,
+            host=PG_HOST,
+            port=PG_PORT,
+            row_factory=rowFactory
+        )
+    except OperationalError as e:
+        print(f"The error '{e}' occurred")
+    return connection
+
+@app.route('/api/user/register', methods=['POST'])
+def registerUser():
+  userData = request.get_json()
+  username = userData.get('username')
+  email = userData.get('email')
+  firstname = userData.get('firstname')
+  lastname = userData.get('lastname')
+  profilePicture = userData.get('profilePicture')
+
+  readablePwd = bytes(userData.get('password'), "utf-8")
+  salt = bcrypt.gensalt()
+  hashedPwd = bcrypt.hashpw(readablePwd, salt).decode('utf-8')
+
+  query = """
+    INSERT INTO public.users(email, username, firstname, lastname, "profilePicture", password)
+	    VALUES (%s, %s, %s, %s, %s, %s);
+  """
+
+  connection = create_connection()
+  cursor = connection.cursor()
+  if not connection:
+    return jsonify({"error": "Database connection failed"}), 500
+
+  try:
+    cursor.execute(query, (email, username, firstname, lastname, profilePicture, hashedPwd))
+    connection.commit()
+    return jsonify({"message": "User registered successfully", "success": True}), 200
+  except Exception as e:
+    print(f"Error registering user: {e}")
+    return jsonify({"error": "Failed to register user", "details": str(e)}), 500
+  finally:
+    cursor.close()
+    connection.close()
+
 
 if __name__ == '__main__':
   app.run(port=5328)
