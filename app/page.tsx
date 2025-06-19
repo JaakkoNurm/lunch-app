@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react";
+import { useAuth } from "./context/auth-context";
 import { RestaurantCard } from "./components/restaurant-card"
 import { ExpandedCard } from "./components/expanded-card";
 import { Button } from "./components/ui/button";
@@ -25,13 +26,15 @@ export default function Home() {
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null)
   const [authModalOpen, setAuthModalOpen] = useState(false)
 
+  const { user, logout } = useAuth()
+
   const handleCardExpansion = (id: string) => {
     setExpandedCardId(expandedCardId === id ? null : id)
   }
 
   const expandedRestaurant = restaurantData.find((restaurant) => restaurant.restaurantName === expandedCardId)
 
-  async function fetchLunchData() {
+  const fetchLunchData = async () => {
     const response = await fetch("/api/lunch")
     const data = await response.json()
     console.log("fetched lunch data", data)
@@ -54,9 +57,15 @@ export default function Home() {
 
       <h1 className="text-3xl font-bold mb-4">Today's Lunch</h1>
       <div className="flex flex-row justify-end mb-2">
-        <Button onClick={() => setAuthModalOpen(true)}>
-          Login
-        </Button>
+        {user ? (
+          <Button onClick={logout}>
+            Logout
+          </Button>
+        ) : (
+          <Button onClick={() => setAuthModalOpen(true)}>
+            Login
+          </Button>
+        )}
       </div>
       <section className="relative">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
