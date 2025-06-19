@@ -59,3 +59,11 @@ type userData = {
 export const registerUser = async (userData: userData) => {
   return performPost('/api/user/register', userData);
 };
+
+export const loginUser = async (email: string, password: string) => {
+  const credentials = {
+    'email': email,
+    'password': password,
+  }
+  return performPost('/api/user/login', credentials);
+};

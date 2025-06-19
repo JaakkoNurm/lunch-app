@@ -11,7 +11,7 @@ import { Input } from "@/app/components/ui/input"
 import { Label } from "@/app/components/ui/label"
 import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/avatar"
 import { Upload, User } from "lucide-react"
-import { registerUser } from "@/app/services/api"
+import { registerUser, loginUser } from "@/app/services/api"
 
 type AuthModalProps = {
   open: boolean
@@ -34,15 +34,27 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
     }
   }
 
-  const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
     const email = formData.get("email") as string
     const password = formData.get("password") as string
 
-    // TODO: Implement login logic
-    console.log("Login:", { email, password })
-    onOpenChange(false)
+    try {
+      const response = await loginUser(email, password)
+      const { success, access_token, user_data } = response;
+
+      if (success) {
+        const fullUser = { ...user_data, accessToken: access_token }
+        localStorage.setItem("token", access_token)
+        localStorage.setItem("user", JSON.stringify(user_data))
+        setUser(fullUser)
+        onOpenChange(false)
+      }
+
+    } catch (error) {
+      console.log(`Error while trying to login in: ${error}`)
+    }
   }
 
   const { setUser } = useAuth()
@@ -73,9 +85,8 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
         throw new Error(response.error);
       }
     } catch (error) {
-      console.log("Error while trying to register: ", error)
+      console.log(`Error while trying to register: ${error}`)
     }
-    onOpenChange(false)
   }
 
   return (
