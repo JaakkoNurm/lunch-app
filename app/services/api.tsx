@@ -57,6 +57,5 @@ type userData = {
 }
 
 export const registerUser = async (userData: userData) => {
-  console.log("registerUser is run")
   return performPost('/api/user/register', userData);
 };

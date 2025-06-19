@@ -1,14 +1,23 @@
 from flask import Flask, request, jsonify
-from datetime import datetime, timezone
+from flask_jwt_extended import (
+  JWTManager, create_access_token,
+  jwt_required, get_jwt_identity
+)
 import requests
-import urllib.parse
-from bs4 import BeautifulSoup
+import bcrypt
 import psycopg
 from psycopg import OperationalError
 from psycopg.rows import dict_row
-import bcrypt
+from datetime import datetime, timezone, timedelta
+import urllib.parse
+from bs4 import BeautifulSoup
+
 
 app = Flask(__name__)
+app.config["JWT_SECRET_KEY"] = "b394c5abe1ec5fb08111c1ee"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+jwt = JWTManager(app)
+
 
 def scrape_lunch_data(restaurant, url, selector):
   response = requests.get(url)
@@ -96,8 +105,8 @@ def registerUser():
   userData = request.get_json()
   username = userData.get('username')
   email = userData.get('email')
-  firstname = userData.get('firstname')
-  lastname = userData.get('lastname')
+  firstname = userData.get('firstName')
+  lastname = userData.get('lastName')
   profilePicture = userData.get('profilePicture')
 
   readablePwd = bytes(userData.get('password'), "utf-8")
@@ -117,7 +126,12 @@ def registerUser():
   try:
     cursor.execute(query, (email, username, firstname, lastname, profilePicture, hashedPwd))
     connection.commit()
-    return jsonify({"message": "User registered successfully", "success": True}), 200
+    token = create_access_token(identity=username)
+    return jsonify({
+      "message": "User registered successfully",
+      "success": True,
+      "access_token": token
+    }), 200
   except Exception as e:
     print(f"Error registering user: {e}")
     return jsonify({"error": "Failed to register user", "details": str(e)}), 500

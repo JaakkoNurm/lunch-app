@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
+import { useAuth } from "../context/auth-context"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/app/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/tabs"
 import { Button } from "@/app/components/ui/button"
@@ -21,8 +22,6 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
   const [activeTab, setActiveTab] = useState("login")
   const [error, setError] = useState('')
   const [profileImage, setProfileImage] = useState<string | null>(null)
-
-  console.log("AuthModal rendered, activeTab:", activeTab)
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -46,9 +45,10 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
     onOpenChange(false)
   }
 
+  const { setUser } = useAuth()
+
   const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    console.log("ran handle register")
     const formData = new FormData(event.currentTarget)
     const userData = {
       email: formData.get("email") as string,
@@ -61,10 +61,14 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
 
     try {
       const response = await registerUser(userData);
-      const { success } = response;
+      const { success, access_token } = response;
 
       if (success) {
-        console.log("Succesfully registered");
+        const fullUser = { ...userData, accessToken: access_token }
+        localStorage.setItem("token", access_token)
+        localStorage.setItem("user", JSON.stringify(userData))
+        setUser(fullUser)
+        onOpenChange(false)
       } else {
         throw new Error(response.error);
       }
