@@ -10,8 +10,8 @@ import { cn } from "@/app/utils/cn"
 type Comment = {
   id: string;
   user: {
-      name: string;
-      avatar?: string;
+    name: string;
+    avatar?: string;
   }
   text: string;
   rating: number;
