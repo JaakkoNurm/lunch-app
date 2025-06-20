@@ -1,9 +1,9 @@
-from flask import jsonify
-import requests
-import psycopg
-from psycopg import OperationalError
+from db.connection import create_connection
 from datetime import datetime, timezone
+from flask import jsonify
 import urllib.parse
+import requests
+import json
 
 def parse_restaurant_data(data):
   parsed_data = []
@@ -39,14 +39,74 @@ def parse_restaurant_data(data):
 
   return parsed_data
 
+
 def fetch_lunch_data():
-  today = datetime.now(timezone.utc).isoformat()
-  language = 'en'
+  today = datetime.now(timezone.utc).date()
+  connection = create_connection()
+  if not connection:
+    return jsonify({"error": "Database connection failed"}), 500
 
-  res = requests.get(
-    f'https://www.unica.fi/menuapi//menu-block-summaries?blockId=10227&date={urllib.parse.quote(today)}&language={language}'
-  )
-  data = res.json()
-  restaurants = parse_restaurant_data(data)
+  try:
+    with connection.cursor() as cursor:
+      # 1. Check if today's data is already loaded
+      cursor.execute(
+        "SELECT * FROM public.restaurants WHERE \"loadedAt\"::date = %s;",
+        (today,)
+      )
+      cached_data = cursor.fetchall()
 
-  return jsonify(restaurants)
+      if cached_data:
+        return jsonify([{
+          "locationName": row["locationname"],
+          "restaurantName": row["restaurantname"],
+          "url": row["url"],
+          "menu": row["menu"],
+          "image": "/api/restaurant-image/" + str(row["id"])
+        } for row in cached_data])
+
+      # 2. Fetch new data from API
+      api_url = f'https://www.unica.fi/menuapi/menu-block-summaries?blockId=10227&date={urllib.parse.quote(today.isoformat())}&language=en'
+      response = requests.get(api_url)
+      if not response.ok:
+        return jsonify({"error": "Failed to fetch lunch data"}), 502
+
+      data = response.json()
+      parsed_restaurants = parse_restaurant_data(data)
+
+      with connection.cursor() as cursor:
+        for restaurant in parsed_restaurants:
+          # Fetch image as bytes
+          image_bytes = None
+          try:
+            img_res = requests.get(f'https://www.unica.fi{restaurant["image"]}?preset=medium')
+            if img_res.ok:
+              image_bytes = img_res.content
+          except Exception as e:
+            print(f"Failed to fetch image: {e}")
+
+          # Insert or update restaurant
+          cursor.execute("""
+            INSERT INTO public.restaurants ("locationName", "restaurantName", image, url, menu)
+            VALUES (%s, %s, %s, %s, %s)
+            ON CONFLICT ("locationName", "restaurantName") DO UPDATE SET
+              image = EXCLUDED.image,
+              url = EXCLUDED.url,
+              menu = EXCLUDED.menu,
+              "loadedAt" = NOW();
+          """, (
+            restaurant["locationName"],
+            restaurant["restaurantName"],
+            image_bytes,
+            restaurant["url"],
+            json.dumps(restaurant["menu"]),
+          ))
+
+        connection.commit()
+
+    return jsonify(parsed_restaurants)
+
+  except Exception as e:
+    print(f"Error: {e}")
+    return jsonify({"error": "Server error", "details": str(e)}), 500
+  finally:
+    connection.close()
