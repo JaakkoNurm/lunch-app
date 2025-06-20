@@ -76,9 +76,16 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
       const { success, access_token } = response;
 
       if (success) {
-        const fullUser = { ...userData, accessToken: access_token }
+        const fullUser = {
+          email: userData.email,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          username: userData.username,
+          profilePicture: userData.profilePicture,
+          accessToken: access_token
+        }
         localStorage.setItem("token", access_token)
-        localStorage.setItem("user", JSON.stringify(userData))
+        localStorage.setItem("user", JSON.stringify(fullUser))
         setUser(fullUser)
         onOpenChange(false)
       } else {

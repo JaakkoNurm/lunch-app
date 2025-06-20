@@ -67,15 +67,14 @@ def login_user(req):
       return jsonify({"error": "Invalid email or password"}), 401
     
     user_data = {
-      'email': user["email"],
-      'firstName': user["firstname"],
-      'lastName': user["lastname"],
-      'username': user["username"],
-      'password': user["password"],
-      'profilePicture': user["profilePicture"],
+      "email": user['email'],
+      "firstName": user['firstname'],
+      "lastName": user['lastname'],
+      "username": user['username'],
+      "profilePicture": user['profilePicture'],
     }
     
-    hashed_password = user_data.get("password")
+    hashed_password = user['password']
     if not bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8')):
       return jsonify({"error": "Invalid email or password"}), 401
     
