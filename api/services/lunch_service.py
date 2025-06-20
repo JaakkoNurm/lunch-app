@@ -1,5 +1,7 @@
 from db.connection import create_connection
 from datetime import datetime, timezone
+from psycopg.rows import dict_row
+from base64 import b64encode
 from flask import jsonify
 import urllib.parse
 import requests
@@ -42,7 +44,7 @@ def parse_restaurant_data(data):
 
 def fetch_lunch_data():
   today = datetime.now(timezone.utc).date()
-  connection = create_connection()
+  connection = create_connection(rowFactory=dict_row)
   if not connection:
     return jsonify({"error": "Database connection failed"}), 500
 
@@ -57,11 +59,11 @@ def fetch_lunch_data():
 
       if cached_data:
         return jsonify([{
-          "locationName": row["locationname"],
-          "restaurantName": row["restaurantname"],
+          "locationName": row["locationName"],
+          "restaurantName": row["restaurantName"],
           "url": row["url"],
           "menu": row["menu"],
-          "image": "/api/restaurant-image/" + str(row["id"])
+          "image": b64encode(row["image"]).decode("utf-8") if row["image"] else None
         } for row in cached_data])
 
       # 2. Fetch new data from API
@@ -77,12 +79,17 @@ def fetch_lunch_data():
         for restaurant in parsed_restaurants:
           # Fetch image as bytes
           image_bytes = None
+          image_b64 = None
           try:
             img_res = requests.get(f'https://www.unica.fi{restaurant["image"]}?preset=medium')
             if img_res.ok:
               image_bytes = img_res.content
+              image_b64 = b64encode(image_bytes).decode("utf-8")
           except Exception as e:
             print(f"Failed to fetch image: {e}")
+
+          # Attach base64 image to the restaurant for the response
+          restaurant["image"] = image_b64
 
           # Insert or update restaurant
           cursor.execute("""

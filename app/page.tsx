@@ -81,7 +81,7 @@ export default function Home() {
                 <RestaurantCard
                   key={restaurantName}
                   name={restaurantName}
-                  imgUrl={image}
+                  imgBytes={image}
                   desc="Today's lunch"
                   menu={menu}
                   onClick={() => handleCardExpansion(restaurantName)}
@@ -95,7 +95,7 @@ export default function Home() {
         <ExpandedCard
           className="z-20 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
           name={expandedRestaurant.restaurantName}
-          imgUrl={expandedRestaurant.image}
+          imgBytes={expandedRestaurant.image}
           desc="Affordable student lunch options."
           menu={expandedRestaurant.menu}
         />

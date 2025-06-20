@@ -5,7 +5,7 @@ import { PriceIndicator } from "./price-indicator";
 
 type RestaurantCardProps = {
   name: string;
-  imgUrl: string;
+  imgBytes: string;
   desc: string;
   menu: {
     mealName: string;
@@ -15,7 +15,7 @@ type RestaurantCardProps = {
   onClick: () => void;
 }
 
-export const RestaurantCard = ({name, imgUrl, desc, menu, onClick}: RestaurantCardProps) => (
+export const RestaurantCard = ({name, imgBytes, desc, menu, onClick}: RestaurantCardProps) => (
   <Card
     className="overflow-hidden h-full transition-all hover:shadow-lg"
     onClick={onClick}
@@ -23,7 +23,7 @@ export const RestaurantCard = ({name, imgUrl, desc, menu, onClick}: RestaurantCa
     <div className="flex items-center justify-center h-48 mt-1 w-full">
       <Image
         className="rounded-md"
-        src={`https://www.unica.fi${imgUrl}?preset=medium`}
+        src={`data:image/jpeg;base64,${imgBytes}`}
         alt="restaurant name"
         width={200}
         height={200}

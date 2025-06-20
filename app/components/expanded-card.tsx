@@ -7,7 +7,7 @@ import { cn } from "@/app/utils/cn"
 
 type ExpandedCardProps = {
   name: string;
-  imgUrl: string;
+  imgBytes: string;
   desc: string;
   menu: {
     mealName: string;
@@ -17,13 +17,13 @@ type ExpandedCardProps = {
   className?: string;
 }
 
-export const ExpandedCard = ({ name, imgUrl, desc, menu, className }: ExpandedCardProps) => (
+export const ExpandedCard = ({ name, imgBytes, desc, menu, className }: ExpandedCardProps) => (
   <Card
     className={cn("w-full max-w-[60%] max-h-[80vh] overflow-y-auto", className)}
   >
     <Image
       className="rounded ml-auto mr-auto mt-4"
-      src={`https://www.unica.fi${imgUrl}?preset=medium`}
+      src={`data:image/jpeg;base64,${imgBytes}`}
       alt="restaurant name"
       width={480}
       height={240}
