@@ -67,3 +67,11 @@ export const loginUser = async (email: string, password: string) => {
   }
   return performPost('/api/user/login', credentials);
 };
+
+export const postComment = async (comment: string, rating: number) => {
+  const commentData = {
+    'comment': comment,
+    'rating': rating,
+  }
+  return performPost('/api/lunch/post-comment', commentData);
+};

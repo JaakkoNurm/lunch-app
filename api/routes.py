@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from services.auth_service import register_user, login_user
-from services.lunch_service import fetch_lunch_data
+from services.lunch_service import fetch_lunch_data, insert_comment
 
 auth_bp = Blueprint('auth', __name__)
 lunch_bp = Blueprint('lunch', __name__)
@@ -16,3 +16,7 @@ def login():
 @lunch_bp.route('/lunch', methods=['GET'])
 def lunch():
   return fetch_lunch_data()
+
+@lunch_bp.route('/lunch/post-review', methods=['POST'])
+def post_comment():
+  return insert_comment(request.get_json())

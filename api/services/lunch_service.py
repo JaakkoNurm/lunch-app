@@ -59,6 +59,7 @@ def fetch_lunch_data():
 
       if cached_data:
         return jsonify([{
+          "id": row["id"],
           "locationName": row["locationName"],
           "restaurantName": row["restaurantName"],
           "url": row["url"],
@@ -100,6 +101,7 @@ def fetch_lunch_data():
               url = EXCLUDED.url,
               menu = EXCLUDED.menu,
               "loadedAt" = NOW();
+            RETURNING id;
           """, (
             restaurant["locationName"],
             restaurant["restaurantName"],
@@ -107,6 +109,9 @@ def fetch_lunch_data():
             restaurant["url"],
             json.dumps(restaurant["menu"]),
           ))
+
+          restaurant_id = cursor.fetchone()[0]
+          restaurant["id"] = restaurant_id
 
         connection.commit()
 
@@ -117,3 +122,14 @@ def fetch_lunch_data():
     return jsonify({"error": "Server error", "details": str(e)}), 500
   finally:
     connection.close()
+
+def insert_comment(req):
+  comment = req.get('comment')
+  rating = req.get('review')
+
+  query = """
+    INSERT INTO public.comments(message, rating, "restaurantId")
+      SELECT %s, %s, r.id
+      FROM public.restaurants r
+      WHERE %s IS r."locationName" AND %s IS r."restaurantName"
+  """

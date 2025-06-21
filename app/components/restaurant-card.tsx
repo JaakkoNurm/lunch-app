@@ -15,7 +15,7 @@ type RestaurantCardProps = {
   onClick: () => void;
 }
 
-export const RestaurantCard = ({name, imgBytes, desc, menu, onClick}: RestaurantCardProps) => (
+export const RestaurantCard = ({ name, imgBytes, desc, menu, onClick }: RestaurantCardProps) => (
   <Card
     className="overflow-hidden h-full transition-all hover:shadow-lg"
     onClick={onClick}

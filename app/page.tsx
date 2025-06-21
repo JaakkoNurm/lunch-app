@@ -8,6 +8,7 @@ import { Button } from "./components/ui/button";
 import { AuthModal } from "./components/auth-modal";
 
 type Restaurants = {
+  id: number;
   locationName: string;
   restaurantName: string;
   openingHoursToday: string;
@@ -23,16 +24,16 @@ type Restaurants = {
 export default function Home() {
   const [restaurantData, setRestaurantData] = useState<Restaurants[]>([])
   const [loading, setLoading] = useState(true)
-  const [expandedCardId, setExpandedCardId] = useState<string | null>(null)
+  const [expandedCardId, setExpandedCardId] = useState<number | null>(null)
   const [authModalOpen, setAuthModalOpen] = useState(false)
 
   const { user, logout } = useAuth()
 
-  const handleCardExpansion = (id: string) => {
+  const handleCardExpansion = (id: number) => {
     setExpandedCardId(expandedCardId === id ? null : id)
   }
 
-  const expandedRestaurant = restaurantData.find((restaurant) => restaurant.restaurantName === expandedCardId)
+  const expandedRestaurant = restaurantData.find((restaurant) => restaurant.id === expandedCardId)
 
   const fetchLunchData = async () => {
     const response = await fetch("/api/lunch")
@@ -75,16 +76,16 @@ export default function Home() {
             </div>
           ) : (
             restaurantData.map((restaurant) => {
-              const { restaurantName, menu, image } = restaurant;
+              const { id, restaurantName, menu, image } = restaurant;
 
               return (
                 <RestaurantCard
-                  key={restaurantName}
+                  key={id}
                   name={restaurantName}
                   imgBytes={image}
                   desc="Today's lunch"
                   menu={menu}
-                  onClick={() => handleCardExpansion(restaurantName)}
+                  onClick={() => handleCardExpansion(id)}
                 />
               )})
           )}
@@ -94,6 +95,7 @@ export default function Home() {
       {expandedCardId && expandedRestaurant && (
         <ExpandedCard
           className="z-20 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+          id={expandedRestaurant.id}
           name={expandedRestaurant.restaurantName}
           imgBytes={expandedRestaurant.image}
           desc="Affordable student lunch options."

@@ -6,6 +6,7 @@ import { CommentSection } from "./comment-section"
 import { cn } from "@/app/utils/cn"
 
 type ExpandedCardProps = {
+  id: number;
   name: string;
   imgBytes: string;
   desc: string;
@@ -17,7 +18,7 @@ type ExpandedCardProps = {
   className?: string;
 }
 
-export const ExpandedCard = ({ name, imgBytes, desc, menu, className }: ExpandedCardProps) => (
+export const ExpandedCard = ({ id, name, imgBytes, desc, menu, className }: ExpandedCardProps) => (
   <Card
     className={cn("w-full max-w-[60%] max-h-[80vh] overflow-y-auto", className)}
   >
@@ -46,7 +47,7 @@ export const ExpandedCard = ({ name, imgBytes, desc, menu, className }: Expanded
         ))}
       </ul>
       <CommentSection
-        restaurantId={name}
+        restaurantId={id}
         comments={[]}
         onAddComment={(comment) => {}}
         onDeleteComment={(commentId) => {}}

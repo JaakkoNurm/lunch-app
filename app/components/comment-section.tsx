@@ -19,7 +19,7 @@ type Comment = {
 }
 
 type CommentSectionProps = {
-  restaurantId: string;
+  restaurantId: number;
   comments: Comment[];
   onAddComment: (comment: Comment) => void;
   onDeleteComment: (commentId: string) => void;
@@ -30,6 +30,11 @@ export const CommentSection = ({ restaurantId, comments, onAddComment, onDeleteC
   const [showCommentForm, setShowCommentForm] = useState(false)
   const [newComment, setNewComment] = useState("")
   const [newRating, setNewRating] = useState(0)
+
+  const handlePostReview = (e: any) => {
+    e.preventDefault()
+    console.log(`New review posted for restaurant id: ${restaurantId}, with message: ${newComment}, and rating of ${newRating}/5`)
+  };
 
   return (
     <div className="mt-4 space-y-4">
@@ -63,7 +68,12 @@ export const CommentSection = ({ restaurantId, comments, onAddComment, onDeleteC
             rows={3}
           />
           <div className="flex justify-end">
-            <Button type="submit" size="sm" disabled={!newComment.trim() || newRating === 0}>
+            <Button
+              type="submit"
+              size="sm"
+              disabled={!newComment.trim() || newRating === 0}
+              onClick={(e) => handlePostReview(e)}
+            >
               Post Review
             </Button>
           </div>
