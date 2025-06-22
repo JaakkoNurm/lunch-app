@@ -1,6 +1,6 @@
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useAuth } from "@/app/context/auth-context"
 import { postComment } from "@/app/services/api"
 import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/avatar"
@@ -133,7 +133,7 @@ export const CommentSection = ({ restaurantId, comments, setComments, commentsLo
                   src={`data:image/jpeg;base64,${comment.user.avatar}`}
                   alt={`Comment from ${comment.user.name}`}
                 />
-                <AvatarFallback>{comment.user.name.substring(1, 3)}</AvatarFallback>
+                <AvatarFallback>{comment.user.name.substring(0, 2)}</AvatarFallback>
               </Avatar>
               <span className="text-sm font-medium ml-2">{comment.user.name}</span>
             </div>

@@ -3,7 +3,6 @@ import { fetchComments } from "../services/api"
 import Image from "next/image"
 import { Star } from "lucide-react"
 import { Card, CardContent, CardFooter } from "@/app/components/ui/card"
-import { PriceIndicator } from "./price-indicator"
 import { CommentSection } from "./comment-section"
 import { cn } from "@/app/utils/cn"
 

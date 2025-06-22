@@ -69,7 +69,7 @@ export default function Home() {
                 src={`data:image/jpeg;base64,${user.profilePicture}`}
                 alt={`Comment from ${user.username}`}
               />
-              <AvatarFallback>{user.username.substring(1, 3)}</AvatarFallback>
+              <AvatarFallback>{user.username.substring(0, 2)}</AvatarFallback>
             </Avatar>
           </div>
         ) : (
