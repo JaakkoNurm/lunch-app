@@ -36,14 +36,5 @@ export const RestaurantCard = ({ name, imgBytes, desc, menu, onClick }: Restaura
         </h3>
       </div>
     </CardContent>
-    <CardFooter className="px-4 py-3 border-t bg-muted/30">
-      <div className="flex justify-between w-full text-sm">
-        <PriceIndicator value={2} />
-        <div className="flex items-center">
-          <Star className="h-4 w-4 fill-amber-400 text-amber-400 mr-1" />
-          <span className="text-sm font-medium">{3.45.toFixed(1)}</span>
-        </div>
-      </div>
-    </CardFooter>
   </Card>
 );

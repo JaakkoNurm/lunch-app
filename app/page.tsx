@@ -5,6 +5,7 @@ import { useAuth } from "./context/auth-context";
 import { RestaurantCard } from "./components/restaurant-card"
 import { ExpandedCard } from "./components/expanded-card";
 import { Button } from "./components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/avatar"
 import { AuthModal } from "./components/auth-modal";
 
 type Restaurants = {
@@ -59,9 +60,18 @@ export default function Home() {
       <h1 className="text-3xl font-bold mb-4">Today's Lunch</h1>
       <div className="flex flex-row justify-end mb-2">
         {user ? (
-          <Button onClick={logout}>
-            Logout
-          </Button>
+          <div className="flex flex-row justify-between items-center gap-2">
+            <Button onClick={logout}>
+              Logout
+            </Button>
+            <Avatar className="h-14 w-14">
+              <AvatarImage
+                src={`data:image/jpeg;base64,${user.profilePicture}`}
+                alt={`Comment from ${user.username}`}
+              />
+              <AvatarFallback>{user.username.substring(1, 3)}</AvatarFallback>
+            </Avatar>
+          </div>
         ) : (
           <Button onClick={() => setAuthModalOpen(true)}>
             Login
