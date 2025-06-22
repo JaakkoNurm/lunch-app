@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react"
+import { jwtDecode } from "jwt-decode";
 
 type User = {
   id: number,
@@ -32,14 +33,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
-    // Optionally load user from localStorage/token
     const token = localStorage.getItem("token")
-    if (token) {
-      // This would be replaced with real logic to fetch user info
-      const storedUser = JSON.parse(localStorage.getItem("user") || "null")
-      if (storedUser) setUser({ ...storedUser, accessToken: token })
+    const storedUser = JSON.parse(localStorage.getItem("user") || "null")
+
+    if (token && storedUser) {
+      const decodedToken: { exp: number } = jwtDecode(token)
+
+      const currentTime = Date.now() / 1000
+      if (decodedToken.exp > currentTime) {
+        setUser({ ...storedUser, accessToken: token })
+        scheduleAutoLogout(decodedToken.exp)
+      } else {
+        logout()
+      }
     }
   }, [])
+
+  const scheduleAutoLogout = (exp: number) => {
+    const msUntilLogout = (exp * 1000) - Date.now()
+    if (msUntilLogout > 0) {
+      setTimeout(() => {
+        logout()
+      }, msUntilLogout)
+    } else {
+      logout()
+    }
+  }
 
   const logout = () => {
     setUser(null)
