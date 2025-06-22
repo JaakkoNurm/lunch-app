@@ -102,3 +102,8 @@ export const postComment = async (
 
   return performPost('/api/lunch/post-comment', commentData);
 };
+
+export const fetchComments = async (restaurantId: number) => {
+  const params = {"restaurantId": restaurantId}
+  return performGet('/api/lunch/get-comments', params);
+}

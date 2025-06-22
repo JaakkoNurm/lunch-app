@@ -1,8 +1,8 @@
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useAuth } from "@/app/context/auth-context"
-import { postComment } from "@/app/services/api"
+import { postComment, fetchComments } from "@/app/services/api"
 import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/avatar"
 import { StarIcon } from "lucide-react"
 import { Button } from "@/app/components/ui/button"
@@ -32,6 +32,17 @@ export const CommentSection = ({ restaurantId }: CommentSectionProps) => {
   const [newRating, setNewRating] = useState(0)
 
   const userContext = useAuth()['user']
+
+  const fetchCommentData = async () => {
+    const response = await fetchComments(restaurantId)
+    console.log(response)
+    const commentData = response["comments"]
+    setComments(commentData)
+  }
+
+  useEffect(() => {
+    fetchCommentData()
+  }, [comments])
 
   const handlePostReview = async (e: any) => {
     e.preventDefault()

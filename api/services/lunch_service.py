@@ -141,7 +141,6 @@ def insert_comment(req):
 
   with connection.cursor() as cursor:
     try:
-      print(comment, rating, restaurantId, userId)
       cursor.execute(query, (comment, rating, restaurantId, userId))
       result = cursor.fetchone()
       connection.commit()
@@ -151,6 +150,50 @@ def insert_comment(req):
         "id": result["id"],
         "date": result["createdAt"]
       }), 200
+    except Exception as e:
+      print(f"Error: {e}")
+      return jsonify({"error": "Server error", "details": str(e)}), 500
+    finally:
+      connection.close()
+
+def get_comments(restaurantId):
+  query = """
+    SELECT 
+      c.id,
+      c.message,
+      c.rating,
+      c."createdAt",
+      u.username,
+      u."profilePicture"
+    FROM public.comments c
+    JOIN public.users u ON c."sentByUser" = u.id
+    WHERE c."restaurantId" = %s
+  """
+  connection = create_connection(rowFactory=dict_row)
+  if not connection:
+    return jsonify({"error": "Database connection failed"}), 500
+
+  with connection.cursor() as cursor:
+    try:
+      cursor.execute(query, (restaurantId,))
+      rows = cursor.fetchall()
+
+      # Format the data to match the Comment type structure
+      comments = [
+        {
+          "id": row["id"],
+          "user": {
+            "name": row["username"],
+            "avatar": row.get("profilePicture")
+          },
+          "text": row["message"],
+          "rating": row["rating"],
+          "date": row["createdAt"].isoformat() if hasattr(row["createdAt"], 'isoformat') else row["createdAt"]
+        }
+        for row in rows
+      ]
+
+      return jsonify(comments)
     except Exception as e:
       print(f"Error: {e}")
       return jsonify({"error": "Server error", "details": str(e)}), 500
