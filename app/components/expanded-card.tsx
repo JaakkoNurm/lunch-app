@@ -40,11 +40,15 @@ export const ExpandedCard = ({ id, name, imgBytes, desc, menu, className }: Expa
         Today's lunch
       </p>
       <ul className="list-disc list-inside mt-2">
-        {menu.map((item) => (
-          <li key={item.mealName}>
-            {item.mealName}: {item.mealPrice}
-          </li>
-        ))}
+        {menu.length > 0 ? (
+          menu.map((item) => (
+            <li key={item.mealName}>
+              {item.mealName}: {item.mealPrice}
+            </li>
+          ))
+        ) : (
+          <li>No menu available for today</li>
+        )}
       </ul>
       <CommentSection
         restaurantId={id}
