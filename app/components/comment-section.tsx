@@ -25,8 +25,8 @@ type CommentSectionProps = {
 }
 
 export const CommentSection = ({ restaurantId }: CommentSectionProps) => {
-  const [isExpanded, setIsExpanded] = useState(false)
   const [comments, setComments] = useState<Comment[]>([])
+  const [commentsLoading, setCommentsLoading] = useState(true)
   const [showCommentForm, setShowCommentForm] = useState(false)
   const [newComment, setNewComment] = useState("")
   const [newRating, setNewRating] = useState(0)
@@ -34,15 +34,15 @@ export const CommentSection = ({ restaurantId }: CommentSectionProps) => {
   const userContext = useAuth()['user']
 
   const fetchCommentData = async () => {
+    setCommentsLoading(true)
     const response = await fetchComments(restaurantId)
-    console.log(response)
-    const commentData = response["comments"]
-    setComments(commentData)
+    setComments(response)
+    setCommentsLoading(false)
   }
 
   useEffect(() => {
     fetchCommentData()
-  }, [comments])
+  }, [])
 
   const handlePostReview = async (e: any) => {
     e.preventDefault()
@@ -76,6 +76,14 @@ export const CommentSection = ({ restaurantId }: CommentSectionProps) => {
       console.log(`Error while trying to register: ${error}`)
     }
   };
+
+  if (commentsLoading) {
+    return (
+      <div>
+        Loading comments...
+      </div>
+    )
+  }
 
   return (
     <div className="mt-4 space-y-4">
@@ -114,7 +122,10 @@ export const CommentSection = ({ restaurantId }: CommentSectionProps) => {
               type="submit"
               size="sm"
               disabled={!newComment.trim() || newRating === 0 || !userContext}
-              onClick={(e) => handlePostReview(e)}
+              onClick={async (e) => {
+                await handlePostReview(e)
+                await fetchCommentData()
+              }}
             >
               Post Review
             </Button>
@@ -122,26 +133,32 @@ export const CommentSection = ({ restaurantId }: CommentSectionProps) => {
         </form>
       )}
 
-      <div className="p-4 rounded-md border">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Avatar>
-              <AvatarImage src="https://github.com/jaakkonurm.png" alt="@shadcn" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-            <span className="text-sm font-medium ml-2">Jaakko Nurminen</span>
+      {comments && comments.map(comment => (
+        <div key={comment.id} className="p-4 rounded-md border">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Avatar>
+                <AvatarImage
+                  src={`data:image/jpeg;base64,${comment.user.avatar}`}
+                  alt={`Comment from ${comment.user.name}`}
+                />
+                <AvatarFallback>{comment.user.name.substring(1, 3)}</AvatarFallback>
+              </Avatar>
+              <span className="text-sm font-medium ml-2">{comment.user.name}</span>
+            </div>
+            <div className="flex items-center">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <StarIcon
+                  key={star}
+                  className={cn("h-5 w-5", comment.rating >= star ? "fill-amber-400 text-amber-400" : "text-muted-foreground")}
+                />
+              ))}
+            </div>
           </div>
-          <div className="flex items-center">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <StarIcon
-                key={star}
-                className={cn("h-5 w-5", 4 >= star ? "fill-amber-400 text-amber-400" : "text-muted-foreground")}
-              />
-            ))}
-          </div>
+          <p className="mt-2 text-sm">{comment.text}</p>
         </div>
-        <p className="mt-2 text-sm">Hyviä viboja, voisin käydä toistekkin!</p>
-      </div>
+      ))}
+
     </div>
   )
 }
