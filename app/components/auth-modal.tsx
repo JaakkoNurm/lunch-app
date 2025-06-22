@@ -73,10 +73,11 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
 
     try {
       const response = await registerUser(userData);
-      const { success, access_token } = response;
+      const { success, access_token, userId } = response;
 
       if (success) {
         const fullUser = {
+          id: userId,
           email: userData.email,
           firstName: userData.firstName,
           lastName: userData.lastName,

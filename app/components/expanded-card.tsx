@@ -48,9 +48,6 @@ export const ExpandedCard = ({ id, name, imgBytes, desc, menu, className }: Expa
       </ul>
       <CommentSection
         restaurantId={id}
-        comments={[]}
-        onAddComment={(comment) => {}}
-        onDeleteComment={(commentId) => {}}
       />
     </CardContent>
     <CardFooter className="px-4 py-3 border-t bg-muted/30">

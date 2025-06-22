@@ -1,6 +1,8 @@
 import type React from "react"
 
 import { useState } from "react"
+import { useAuth } from "@/app/context/auth-context"
+import { postComment } from "@/app/services/api"
 import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/avatar"
 import { StarIcon } from "lucide-react"
 import { Button } from "@/app/components/ui/button"
@@ -20,20 +22,48 @@ type Comment = {
 
 type CommentSectionProps = {
   restaurantId: number;
-  comments: Comment[];
-  onAddComment: (comment: Comment) => void;
-  onDeleteComment: (commentId: string) => void;
 }
 
-export const CommentSection = ({ restaurantId, comments, onAddComment, onDeleteComment }: CommentSectionProps) => {
+export const CommentSection = ({ restaurantId }: CommentSectionProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [comments, setComments] = useState<Comment[]>([])
   const [showCommentForm, setShowCommentForm] = useState(false)
   const [newComment, setNewComment] = useState("")
   const [newRating, setNewRating] = useState(0)
 
-  const handlePostReview = (e: any) => {
+  const userContext = useAuth()['user']
+
+  const handlePostReview = async (e: any) => {
     e.preventDefault()
-    console.log(`New review posted for restaurant id: ${restaurantId}, with message: ${newComment}, and rating of ${newRating}/5`)
+    try {
+      if (!userContext) {
+        throw new Error("User must be logged in to post a comment.");
+      }
+
+      const response = await postComment(
+        newComment,
+        newRating,
+        restaurantId,
+        userContext.id,
+        userContext.accessToken
+      )
+      const { success, id, date } = response
+      if (success) {
+        setComments([
+          ...comments, {
+          id,
+          user: {
+            name: userContext.username,
+            avatar: userContext.profilePicture || undefined
+          },
+          text: newComment,
+          rating: newRating,
+          date,
+        }])
+      }
+    } catch (error) {
+      console.log(`Error while trying to register: ${error}`)
+    }
   };
 
   return (
@@ -53,7 +83,7 @@ export const CommentSection = ({ restaurantId, comments, onAddComment, onDeleteC
           <div className="flex items-center space-x-1">
             <span className="text-sm mr-2">Rating:</span>
             {[1, 2, 3, 4, 5].map((star) => (
-              <button key={star} type="button" onClick={() => setNewRating(star)} className="focus:outline-none">
+              <button key={star} disabled={!userContext} type="button" onClick={() => setNewRating(star)} className="focus:outline-none">
                 <StarIcon
                   className={cn("h-5 w-5", newRating >= star ? "fill-amber-400 text-amber-400" : "text-muted-foreground")}
                 />
@@ -61,6 +91,7 @@ export const CommentSection = ({ restaurantId, comments, onAddComment, onDeleteC
             ))}
           </div>
           <Textarea
+            disabled={!userContext}
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Write your comment here..."
@@ -71,7 +102,7 @@ export const CommentSection = ({ restaurantId, comments, onAddComment, onDeleteC
             <Button
               type="submit"
               size="sm"
-              disabled={!newComment.trim() || newRating === 0}
+              disabled={!newComment.trim() || newRating === 0 || !userContext}
               onClick={(e) => handlePostReview(e)}
             >
               Post Review

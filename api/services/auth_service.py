@@ -17,7 +17,8 @@ def register_user(userData):
 
   query = """
     INSERT INTO public.users(email, username, firstname, lastname, "profilePicture", password)
-	    VALUES (%s, %s, %s, %s, %s, %s);
+	    VALUES (%s, %s, %s, %s, %s, %s)
+    RETURNING id;
   """
 
   connection = create_connection()
@@ -27,12 +28,14 @@ def register_user(userData):
 
   try:
     cursor.execute(query, (email, username, firstname, lastname, profilePicture, hashedPwd))
+    userId = cursor.fetchone()[0]
     connection.commit()
     token = create_access_token(identity=username)
     return jsonify({
       "message": "User registered successfully",
       "success": True,
-      "access_token": token
+      "access_token": token,
+      "userId": userId
     }), 200
   except Exception as e:
     print(f"Error registering user: {e}")
@@ -67,6 +70,7 @@ def login_user(req):
       return jsonify({"error": "Invalid email or password"}), 401
     
     user_data = {
+      "id": user['id'],
       "email": user['email'],
       "firstName": user['firstname'],
       "lastName": user['lastname'],

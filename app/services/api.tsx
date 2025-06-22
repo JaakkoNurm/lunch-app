@@ -47,6 +47,17 @@ const performGet = (
     .catch(axiosErrorHandler);
 };
 
+const validateToken = async (token: string) => {
+  try {
+    const config: AxiosRequestConfig = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+    return await performGet('/api/user/validate-token', {}, config);
+  } catch (error) {
+    return { error: 'token invalid' };
+  }
+};
+
 type userData = {
   email: string,
   firstName: string,
@@ -68,10 +79,26 @@ export const loginUser = async (email: string, password: string) => {
   return performPost('/api/user/login', credentials);
 };
 
-export const postComment = async (comment: string, rating: number) => {
-  const commentData = {
-    'comment': comment,
-    'rating': rating,
+export const postComment = async (
+  comment: string,
+  rating: number,
+  restaurantId: number,
+  userId: number,
+  token: string
+) => {
+
+  // return error if token is invalid or expired
+  const result = await validateToken(token);
+  if (!result.error) {
+    return new Error('Invalid token');
   }
+
+  const commentData = {
+    "comment": comment,
+    "rating": rating,
+    "restaurantId": restaurantId,
+    "userId": userId,
+  };
+
   return performPost('/api/lunch/post-comment', commentData);
 };

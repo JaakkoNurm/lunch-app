@@ -80,7 +80,7 @@ export default function Home() {
 
               return (
                 <RestaurantCard
-                  key={id}
+                  key={`restaurant-${id}`}
                   name={restaurantName}
                   imgBytes={image}
                   desc="Today's lunch"

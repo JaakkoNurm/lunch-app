@@ -100,7 +100,7 @@ def fetch_lunch_data():
               image = EXCLUDED.image,
               url = EXCLUDED.url,
               menu = EXCLUDED.menu,
-              "loadedAt" = NOW();
+              "loadedAt" = NOW()
             RETURNING id;
           """, (
             restaurant["locationName"],
@@ -110,7 +110,7 @@ def fetch_lunch_data():
             json.dumps(restaurant["menu"]),
           ))
 
-          restaurant_id = cursor.fetchone()[0]
+          restaurant_id = cursor.fetchone()
           restaurant["id"] = restaurant_id
 
         connection.commit()
@@ -125,11 +125,34 @@ def fetch_lunch_data():
 
 def insert_comment(req):
   comment = req.get('comment')
-  rating = req.get('review')
+  rating = req.get('rating')
+  restaurantId = req.get('restaurantId')
+  userId = req.get('userId')
 
   query = """
-    INSERT INTO public.comments(message, rating, "restaurantId")
-      SELECT %s, %s, r.id
-      FROM public.restaurants r
-      WHERE %s IS r."locationName" AND %s IS r."restaurantName"
+    INSERT INTO public.comments(message, rating, "restaurantId", "sentByUser")
+      VALUES (%s, %s, %s, %s)
+    RETURNING id, "createdAt"
   """
+
+  connection = create_connection(rowFactory=dict_row)
+  if not connection:
+    return jsonify({"error": "Database connection failed"}), 500
+
+  with connection.cursor() as cursor:
+    try:
+      print(comment, rating, restaurantId, userId)
+      cursor.execute(query, (comment, rating, restaurantId, userId))
+      result = cursor.fetchone()
+      connection.commit()
+
+      return jsonify({
+        "success": True,
+        "id": result["id"],
+        "date": result["createdAt"]
+      }), 200
+    except Exception as e:
+      print(f"Error: {e}")
+      return jsonify({"error": "Server error", "details": str(e)}), 500
+    finally:
+      connection.close()
