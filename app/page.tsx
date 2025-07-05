@@ -58,26 +58,34 @@ export default function Home() {
       )}
 
       <h1 className="text-3xl font-bold mb-4">Today's Lunch</h1>
-      <div className="flex flex-row justify-end mb-2">
-        {user ? (
-          <div className="flex flex-row justify-between items-center gap-2">
-            <Button onClick={logout}>
-              Logout
-            </Button>
-            <Avatar className="h-14 w-14">
+      {user ? (
+        <div className="flex flex-row justify-between items-center mb-2">
+          <div className="flex items-center gap-3">
+            <Avatar className="h-12 w-12 ring-2 ring-gray-100">
               <AvatarImage
                 src={`data:image/jpeg;base64,${user.profilePicture}`}
                 alt={`Comment from ${user.username}`}
               />
               <AvatarFallback>{user.username.substring(0, 2)}</AvatarFallback>
             </Avatar>
+
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold text-gray-900">{user.username}</span>
+              <span className="text-xs text-gray-500">{user.email}</span>
+            </div>
           </div>
-        ) : (
+
+          <Button onClick={logout}>
+            Logout
+          </Button>
+        </div>
+      ) : (
+        <div className="flex flex-row justify-end mb-2">
           <Button onClick={() => setAuthModalOpen(true)}>
             Login
           </Button>
-        )}
-      </div>
+        </div>
+      )}
       <section className="relative">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
