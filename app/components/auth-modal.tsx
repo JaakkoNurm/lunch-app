@@ -62,13 +62,17 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
   const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
+    const b64ProfilePicture = profileImage
+      ? profileImage.split(",", 2)[1]
+      : null
+
     const userData = {
       email: formData.get("email") as string,
       firstName: formData.get("firstName") as string,
       lastName: formData.get("lastName") as string,
       username: formData.get("username") as string,
       password: formData.get("password") as string,
-      profilePicture: profileImage,
+      profilePicture: b64ProfilePicture,
     }
 
     try {

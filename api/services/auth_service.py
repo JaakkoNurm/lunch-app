@@ -2,6 +2,7 @@ from flask import request, jsonify
 from flask_jwt_extended import create_access_token
 from psycopg.rows import dict_row
 from db.connection import create_connection
+from base64 import b64decode, b64encode
 import bcrypt
 
 def register_user(userData):
@@ -9,7 +10,10 @@ def register_user(userData):
   email = userData.get('email')
   firstname = userData.get('firstName')
   lastname = userData.get('lastName')
-  profilePicture = userData.get('profilePicture')
+  data_url = userData.get('profilePicture')
+
+  _, base64_data = data_url.split(',', 1)
+  binary_profile_picture = b64decode(base64_data)
 
   readablePwd = bytes(userData.get('password'), "utf-8")
   salt = bcrypt.gensalt()
@@ -27,7 +31,7 @@ def register_user(userData):
     return jsonify({"error": "Database connection failed"}), 500
 
   try:
-    cursor.execute(query, (email, username, firstname, lastname, profilePicture, hashedPwd))
+    cursor.execute(query, (email, username, firstname, lastname, binary_profile_picture, hashedPwd))
     userId = cursor.fetchone()[0]
     connection.commit()
     token = create_access_token(identity=username)
@@ -46,9 +50,7 @@ def register_user(userData):
 
 def login_user(req):
   email = req.get('email')
-  print(email)
   password = req.get('password')
-  print(password)
 
   if not email or not password:
     return jsonify({"error": "Email and password are required"}), 400
@@ -75,7 +77,7 @@ def login_user(req):
       "firstName": user['firstname'],
       "lastName": user['lastname'],
       "username": user['username'],
-      "profilePicture": user['profilePicture'],
+      "profilePicture": b64encode(user["profilePicture"]).decode("utf-8") if user.get("profilePicture") else None,
     }
     
     hashed_password = user['password']

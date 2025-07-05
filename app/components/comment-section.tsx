@@ -62,6 +62,10 @@ export const CommentSection = ({ restaurantId, comments, setComments, commentsLo
           rating: newRating,
           date,
         }])
+
+        setNewComment("")
+        setNewRating(0)
+        setShowCommentForm(false)
       }
     } catch (error) {
       console.log(`Error while trying to register: ${error}`)
@@ -130,7 +134,7 @@ export const CommentSection = ({ restaurantId, comments, setComments, commentsLo
             <div className="flex items-center space-x-2">
               <Avatar>
                 <AvatarImage
-                  src={`data:image/jpeg;base64,${comment.user.avatar}`}
+                  src={`data:image/jpeg;base64, ${comment.user.avatar}`}
                   alt={`Comment from ${comment.user.name}`}
                 />
                 <AvatarFallback>{comment.user.name.substring(0, 2)}</AvatarFallback>

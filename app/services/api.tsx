@@ -89,7 +89,7 @@ export const postComment = async (
 
   // return error if token is invalid or expired
   const result = await validateToken(token);
-  if (!result.error) {
+  if (result.valid === false) {
     return new Error('Invalid token');
   }
 

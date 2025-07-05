@@ -37,6 +37,7 @@ export const ExpandedCard = ({ id, name, imgBytes, desc, menu, className }: Expa
   const fetchCommentData = async () => {
     setCommentsLoading(true)
     const response = await fetchComments(id)
+    console.log(response)
     setComments(response)
     setCommentsLoading(false)
   }

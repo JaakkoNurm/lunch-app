@@ -18,6 +18,9 @@ def login():
 @jwt_required()
 def validate_token():
   user_identity = get_jwt_identity()
+  if not user_identity:
+    return jsonify({'valid': False, 'error': 'Invalid token'}), 401
+
   return jsonify({
     'valid': True,
     'user': user_identity

@@ -184,7 +184,7 @@ def get_comments(restaurantId):
           "id": row["id"],
           "user": {
             "name": row["username"],
-            "avatar": row.get("profilePicture")
+            "avatar": b64encode(row["profilePicture"]).decode("utf-8") if row.get("profilePicture") else None
           },
           "text": row["message"],
           "rating": row["rating"],
