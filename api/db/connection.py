@@ -9,7 +9,7 @@ def create_connection(rowFactory=None):
       dbname=Config.PG_DATABASE,
       user=Config.PG_USER,
       password=Config.PG_PASSWORD,
-      host="localhost",
+      host=Config.PG_HOST,
       port=Config.PG_PORT,
       row_factory=rowFactory
     )
