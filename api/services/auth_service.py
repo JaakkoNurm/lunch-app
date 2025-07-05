@@ -10,10 +10,9 @@ def register_user(userData):
   email = userData.get('email')
   firstname = userData.get('firstName')
   lastname = userData.get('lastName')
-  data_url = userData.get('profilePicture')
+  base64Data = userData.get('profilePicture')
 
-  _, base64_data = data_url.split(',', 1)
-  binary_profile_picture = b64decode(base64_data)
+  binaryPfp = b64decode(base64Data)
 
   readablePwd = bytes(userData.get('password'), "utf-8")
   salt = bcrypt.gensalt()
@@ -31,7 +30,7 @@ def register_user(userData):
     return jsonify({"error": "Database connection failed"}), 500
 
   try:
-    cursor.execute(query, (email, username, firstname, lastname, binary_profile_picture, hashedPwd))
+    cursor.execute(query, (email, username, firstname, lastname, binaryPfp, hashedPwd))
     userId = cursor.fetchone()[0]
     connection.commit()
     token = create_access_token(identity=username)
