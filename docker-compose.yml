@@ -3,7 +3,7 @@ services:
     image: postgres
     restart: unless-stopped
     environment:
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
     container_name: postgres
     ports:
       - "5432:5432"
@@ -19,7 +19,14 @@ services:
     ports:
       - "5328:5328"
     environment:
-      - FLASK_ENV=development
+      - FLASK_ENV=${FLASK_ENV}
+      - PG_HOST=${PG_HOST}
+      - PG_DATABASE=${PG_DATABASE}
+      - PG_USER=${PG_USER}
+      - PG_PASSWORD=${PG_PASSWORD}
+      - PG_PORT=${PG_PORT}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRE_HOURS=${JWT_EXPIRE_HOURS}
     depends_on:
       - db
 
