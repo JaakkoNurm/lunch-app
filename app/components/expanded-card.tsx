@@ -33,11 +33,10 @@ type Comment = {
 export const ExpandedCard = ({ id, name, imgBytes, desc, menu, className }: ExpandedCardProps) => {
   const [commentsLoading, setCommentsLoading] = useState(true)
   const [comments, setComments] = useState<Comment[]>([])
-
+  console.log(id)
   const fetchCommentData = async () => {
     setCommentsLoading(true)
     const response = await fetchComments(id)
-    console.log(response)
     setComments(response)
     setCommentsLoading(false)
   }
