@@ -46,8 +46,8 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
 
       if (success) {
         const fullUser = { ...user_data, accessToken: access_token }
-        localStorage.setItem("token", access_token)
-        localStorage.setItem("user", JSON.stringify(fullUser))
+        sessionStorage.setItem("token", access_token)
+        sessionStorage.setItem("user", JSON.stringify(fullUser))
         setUser(fullUser)
         onOpenChange(false)
       }
@@ -89,8 +89,8 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
           profilePicture: userData.profilePicture,
           accessToken: access_token
         }
-        localStorage.setItem("token", access_token)
-        localStorage.setItem("user", JSON.stringify(fullUser))
+        sessionStorage.setItem("token", access_token)
+        sessionStorage.setItem("user", JSON.stringify(fullUser))
         setUser(fullUser)
         onOpenChange(false)
       } else {
