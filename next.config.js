@@ -7,7 +7,7 @@ const nextConfig = {
         destination:
           process.env.NODE_ENV === 'development'
             ? 'http://127.0.0.1:5328/api/:path*'
-            : 'http://backend:5328/api/:path*',
+            : 'https://lunch-app-backend.fly.dev/api/:path*',
       },
     ]
   },

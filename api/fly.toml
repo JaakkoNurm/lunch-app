@@ -1,0 +1,26 @@
+# fly.toml app configuration file generated for lunch-app-backend on 2025-07-06T18:20:02+03:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'lunch-app-backend'
+primary_region = 'arn'
+
+[build]
+
+[env]
+  PORT = "5328"
+  JWT_EXPIRE_HOURS = "1"
+
+[http_service]
+  internal_port = 5328
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[vm]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1

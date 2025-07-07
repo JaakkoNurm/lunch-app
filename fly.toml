@@ -1,0 +1,27 @@
+# fly.toml app configuration file generated for lunch-app-frontend on 2025-07-06T18:23:19+03:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'lunch-app-frontend'
+primary_region = 'arn'
+
+[build]
+  dockerfile = "app/dockerfile"
+  context = "."
+
+[env]
+  NEXT_PUBLIC_API_URL = "https://lunch-app-backend.fly.dev"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[vm]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
