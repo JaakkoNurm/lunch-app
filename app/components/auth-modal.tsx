@@ -47,7 +47,6 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
       if (success) {
         const fullUser = { ...user_data, accessToken: access_token }
         sessionStorage.setItem("token", access_token)
-        sessionStorage.setItem("user", JSON.stringify(fullUser))
         setUser(fullUser)
         onOpenChange(false)
       }
@@ -90,7 +89,6 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
           accessToken: access_token
         }
         sessionStorage.setItem("token", access_token)
-        sessionStorage.setItem("user", JSON.stringify(fullUser))
         setUser(fullUser)
         onOpenChange(false)
       } else {

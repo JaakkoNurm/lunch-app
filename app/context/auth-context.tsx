@@ -34,14 +34,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const token = sessionStorage.getItem("token")
-    const storedUser = JSON.parse(sessionStorage.getItem("user") || "null")
 
-    if (token && storedUser) {
+    if (token) {
       const decodedToken: { exp: number } = jwtDecode(token)
 
       const currentTime = Date.now() / 1000
       if (decodedToken.exp > currentTime) {
-        setUser({ ...storedUser, accessToken: token })
         scheduleAutoLogout(decodedToken.exp)
       } else {
         logout()
@@ -63,7 +61,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     setUser(null)
     sessionStorage.removeItem("token")
-    sessionStorage.removeItem("user")
   }
 
   return (

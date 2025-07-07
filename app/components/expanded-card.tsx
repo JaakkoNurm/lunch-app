@@ -47,7 +47,10 @@ export const ExpandedCard = ({ id, name, imgBytes, desc, menu, className }: Expa
   
   return (
     <Card
-      className={cn("w-full max-w-[60%] max-h-[80vh] overflow-y-auto", className)}
+      className={cn(
+        "w-full max-w-[85%] md:max-w-[60%] max-h-[80vh] overflow-y-auto",
+        className
+      )}
     >
       <Image
         className="rounded ml-auto mr-auto mt-4"
